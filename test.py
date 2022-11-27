@@ -1,20 +1,37 @@
 import requests
 from bs4 import BeautifulSoup
+import csv
 
 
 url = "http://books.toscrape.com/"
 page = requests.get(url)
 soup = BeautifulSoup(page.content, 'html.parser')
 
+#lis = soup.find('div', class_="side_categories").find_all('li.ul.li')
+uls = soup.find('div', class_="side_categories").find_all('ul')
 
-prices = soup.find_all("p", class_="price_color")
+lis = uls[1].find_all('li')
 
-tab_prices = []
-for price in prices:
-	tab_prices.append(price.string)
+"""
+for li in lis:
+	categoryUrl = li.find('a').get('href')
+	print(categoryUrl)
+
+	categoryName = li.text.replace('[ "/s]', "").strip()
+	print(categoryName)
+
+"""
+
+links = []
+categories = []
+
+for li in lis:
+	link = li.find('a').get('href')
+	links.append(url + link)
+
+	categorie = li.find('a').text.replace('[ "/s]', "").strip()
+	categories.append(categorie)
 
 
-print(tab_prices)
-
-
-
+print(links)
+print(categories)
