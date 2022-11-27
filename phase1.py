@@ -1,10 +1,14 @@
 import requests
 from bs4 import BeautifulSoup
 import csv
+from urllib.parse import urljoin
+from PIL import Image
+import pathlib
 
 
-#url = "http://books.toscrape.com/"
-url = "http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
+urlMain = "http://books.toscrape.com/"
+#url = "http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
+url = 'http://books.toscrape.com/catalogue/tipping-the-velvet_999/index.html'
 page = requests.get(url)
 soup = BeautifulSoup(page.content, 'html.parser')
 
@@ -22,8 +26,31 @@ productAvailability = tds[5].string
 
 
 
+#Telechargement de l'image
+imgSrc = soup.find('img').get('src')
+imgUrl = urljoin(urlMain, imgSrc)
+img = Image.open(requests.get(imgUrl, stream = True).raw)
+productImageName = '\\images\\' + productTitle + '.jpg'
+img.save(str(pathlib.Path().absolute()) + productImageName)
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
 print(productUniversalCode)
 print(productExcTax)
 print(productIncTax)
 print(productAvailability)
 print(productDescription)
+"""
+print(productReview)
+print(imgUrl)
