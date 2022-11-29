@@ -4,6 +4,7 @@ import csv
 from urllib.parse import urljoin
 from PIL import Image
 import pathlib
+import re
 
 
 urlMain = "http://books.toscrape.com/"
@@ -45,7 +46,12 @@ with open('data.csv', 'w') as csv_file:
 				productTitle = productSoup.find('div', class_='col-sm-6 product_main').find('h1').string
 				tmpProductReview = productSoup.find('div', class_='col-sm-6 product_main').find_all('p')[2]
 				productReview = tmpProductReview['class'][1]
-				productDescription = productSoup.find('div', id='product_description').findNext('p').string
+
+
+				if productSoup.find('div', id='product_description') is None:		#Vérification description du livre n'est pas vide
+					productDescription = ""
+				else:
+					productDescription = productSoup.find('div', id='product_description').findNext('p').string
 
 				tds = productSoup.find('table', class_='table table-striped').find_all('td')
 				productUniversalCode = tds[0].string
@@ -57,8 +63,9 @@ with open('data.csv', 'w') as csv_file:
 				imgSrc = productSoup.find('img').get('src')
 				imgUrl = urljoin(urlMain, imgSrc)
 				img = Image.open(requests.get(imgUrl, stream = True).raw)
-				tmpProductTitle = productTitle.replace('[/\\:*?"<>;|]', ',')
+				tmpProductTitle = re.sub(r'[\\/:"*?<>|]+', "_",productTitle)
 				imgPath = '\\images\\' + tmpProductTitle + '.jpg'
+				print(imgPath)
 				img.save(str(pathlib.Path().absolute()) + imgPath)
 
 				#Ecriture dans le fichier csv
@@ -76,6 +83,7 @@ with open('data.csv', 'w') as csv_file:
 .replace( /[<>:"\/\\|?*]+/g, '' );
 .replace(r'[\\/*?:"<>|]', '')
 .replace('[/\\:*?"<>]', ',')
+.replace('[ /\\:*?"<>;|]', '_')
 
 """
 
