@@ -63,9 +63,8 @@ with open('data.csv', 'w') as csv_file:
 				imgSrc = productSoup.find('img').get('src')
 				imgUrl = urljoin(urlMain, imgSrc)
 				img = Image.open(requests.get(imgUrl, stream = True).raw)
-				tmpProductTitle = re.sub(r'[\\/:"*?<>|]+', "_",productTitle)
+				tmpProductTitle = re.sub(r'[\\/:"*?<>|]+', "_", productTitle)
 				imgPath = '\\images\\' + tmpProductTitle + '.jpg'
-				print(imgPath)
 				img.save(str(pathlib.Path().absolute()) + imgPath)
 
 				#Ecriture dans le fichier csv
@@ -77,26 +76,3 @@ with open('data.csv', 'w') as csv_file:
 				categoryLink = urljoin(categoryLink, nextButton.find('a').get('href'))
 			else:
 				break
-
-	
-"""
-.replace( /[<>:"\/\\|?*]+/g, '' );
-.replace(r'[\\/*?:"<>|]', '')
-.replace('[/\\:*?"<>]', ',')
-.replace('[ /\\:*?"<>;|]', '_')
-
-"""
-
-
-
-
-"""
-print(productUniversalCode)
-print(productExcTax)
-print(productIncTax)
-print(productAvailability)
-print(productDescription)
-print(productReview)
-print(imgUrl)
-"""
-
