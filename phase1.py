@@ -19,7 +19,7 @@ lisSideMenu = ulsSideMenu[1].find_all('li')
 #Ouverture fichier csv
 columnsTitles = ['Titre du livre', 'Lien du livre', 'Catégorie', 'Prix HT', 'Prix TTC', 'Disponibilité', 'Code', 'Note']
 with open('data.csv', 'w') as csv_file:
-	writer = csv.writer(csv_file, delimiter = ',')
+	writer = csv.writer(csv_file, sep = ';')	#delimiter = ','
 	writer.writerow(columnsTitles)
 
 	#Bouclage sur les categories
@@ -63,7 +63,7 @@ with open('data.csv', 'w') as csv_file:
 				imgSrc = productSoup.find('img').get('src')
 				imgUrl = urljoin(urlMain, imgSrc)
 				img = Image.open(requests.get(imgUrl, stream = True).raw)
-				tmpProductTitle = re.sub(r'[\\/:"*?<>|]+', "_", productTitle)
+				tmpProductTitle = re.sub(r'[\\/:"*?<>|\'\s]+', "_", productTitle)
 				imgPath = '\\images\\' + tmpProductTitle + '.jpg'
 				img.save(str(pathlib.Path().absolute()) + imgPath)
 
@@ -76,3 +76,6 @@ with open('data.csv', 'w') as csv_file:
 				categoryLink = urljoin(categoryLink, nextButton.find('a').get('href'))
 			else:
 				break
+
+
+#replace ; dans description
