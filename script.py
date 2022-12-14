@@ -16,17 +16,22 @@ soupMain = BeautifulSoup(pageMain.content, 'html.parser')
 ulsSideMenu = soupMain.find('div', class_ = "side_categories").find_all('ul')
 lisSideMenu = ulsSideMenu[1].find_all('li')
 
-#Ouverture fichier csv
-columnsTitles = ['Titre du livre', 'Lien du livre', 'Catégorie', 'Prix HT', 'Prix TTC', 'Disponibilité', 'Code', 'Note']
-with open('data.csv', 'w') as csv_file:
-	writer = csv.writer(csv_file, sep = ';')	#delimiter = ','
-	writer.writerow(columnsTitles)
 
-	#Bouclage sur les categories
-	for li in lisSideMenu:
-		tmpCategoryLink = li.find('a').get('href')
-		categoryLink = urlMain + tmpCategoryLink
-		categoryName = li.find('a').text.replace('[ "/s"]',"").strip()
+
+#Bouclage sur les categories
+for li in lisSideMenu:
+	tmpCategoryLink = li.find('a').get('href')
+	categoryLink = urlMain + tmpCategoryLink
+	categoryName = li.find('a').text.replace('[ "/s"]',"").strip()
+
+	#Ouverture fichier csv
+	columnsTitles = ['Titre du livre', 'Lien du livre', 'Catégorie', 'Prix HT', 'Prix TTC', 'Disponibilité', 'Code', 'Note', 'Description', 'Lien couverture']
+	dataFileName = 'data/' + categoryName + '.csv'
+	
+	#Ecriture dans le csv correspondant
+	with open(dataFileName, 'w', encoding='utf-8') as csv_file:
+		writer = csv.writer(csv_file, delimiter = '\t')
+		writer.writerow(columnsTitles)
 
 
 		#Bouclage selon pagination
@@ -68,7 +73,8 @@ with open('data.csv', 'w') as csv_file:
 				img.save(str(pathlib.Path().absolute()) + imgPath)
 
 				#Ecriture dans le fichier csv
-				writer.writerow([productTitle, productUrl, categoryName, productExcTax, productIncTax, productAvailability, productUniversalCode, productReview])
+				writer.writerow([productTitle, productUrl, categoryName, productExcTax, productIncTax, productAvailability, productUniversalCode, productReview, productDescription, imgUrl])
+				print(productTitle)
 
 			#Verification bouton Next + chgt url de la page
 			nextButton = pageSoup.find('li', class_='next')
@@ -78,4 +84,5 @@ with open('data.csv', 'w') as csv_file:
 				break
 
 
-#replace ; dans description
+
+
